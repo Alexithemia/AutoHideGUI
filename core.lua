@@ -20,13 +20,27 @@ function AutoHideGUI.Update(_, tickCount)
     if tickCount - AutoHideGUI.lastTick >= 100 then
         AutoHideGUI.lastTick = tickCount
 
-        if IsControlOpen("ChatLog") and AutoHideGUI.guiHidden then
-            AutoHideGUI.guiHidden = false
+        local inCutscene = (Player and (Player.onlinestatus == 15 or Player.onlinestatus == 18))
+        local inDialogue =
+            IsControlOpen("Talk") or          -- NPC speech
+            IsControlOpen("SelectString") or  -- dialogue choices
+            IsControlOpen("SelectYesno") or   -- yes/no prompts
+            IsControlOpen("JournalResult")    -- quest accept/complete
+
+        local inCombat = Player and Player.incombat
+        local validDialogue = inDialogue and not inCombat
+
+        local shouldHide = inCutscene or validDialogue
+
+        -- HIDE
+        if shouldHide and not AutoHideGUI.guiHidden then
+            AutoHideGUI.guiHidden = true
             ToggleGUI()
         end
 
-        if not IsControlOpen("ChatLog") and not AutoHideGUI.guiHidden then
-            AutoHideGUI.guiHidden = true
+        -- SHOW
+        if not shouldHide and AutoHideGUI.guiHidden then
+            AutoHideGUI.guiHidden = false
             ToggleGUI()
         end
     end
