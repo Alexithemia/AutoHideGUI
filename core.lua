@@ -1,7 +1,6 @@
 AutoHideGUI = {
     enabled = true,
     lastTick = 0,
-    guiHidden = false,
 }
 
 function AutoHideGUI.Update(_, tickCount)
@@ -33,14 +32,12 @@ function AutoHideGUI.Update(_, tickCount)
         local shouldHide = inCutscene or validDialogue
 
         -- HIDE
-        if shouldHide and not AutoHideGUI.guiHidden then
-            AutoHideGUI.guiHidden = true
+        if shouldHide and IsGUIVisible() then
             ToggleGUI()
         end
 
         -- SHOW
-        if not shouldHide and AutoHideGUI.guiHidden then
-            AutoHideGUI.guiHidden = false
+        if not shouldHide and not IsGUIVisible() then
             ToggleGUI()
         end
     end
